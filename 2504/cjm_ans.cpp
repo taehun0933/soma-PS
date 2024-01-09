@@ -24,7 +24,6 @@ int main(){
                     mess.push(x.size());
                 }
             }
-
         }else if(cur == ')'){
             if(!s.empty()&&s.top() == '['){
                 cout <<'0'<<'\n';
@@ -33,17 +32,14 @@ int main(){
                 cout <<'0'<<'\n';
                 return 0;
             }
-
             if(s.top()==a[i-1]){
                 x.push(2);
                 s.pop();
 
             }else{
                 s.pop();
-
                 int q = x.size()-mess.top();
                 int result=0;
-            
                 while(q--){
                     int c=x.top();
                     x.pop();
@@ -51,7 +47,6 @@ int main(){
                 }
                 x.push(result*2);
                 mess.pop();
-
             }
         }else { // cur == ']'
             if(!s.empty()&& s.top() == '('){
@@ -61,37 +56,27 @@ int main(){
                 cout <<'0'<<'\n';
                 return 0;
             }
-
             if(s.top()==a[i-1]){
-
                 x.push(3);
                 s.pop();
-
             }else{
-                s.pop();
-                
+                s.pop();   
                 int q = x.size()-mess.top();
                 int result=0;
-
                 while(q--){
                     int c=x.top();
                     x.pop();
                     result += c;
                 }  
-                mess.pop();
-                x.push(result*3);
-
             }
         }
     }
-    
     if(!s.empty()){
         cout <<'0'<<'\n';
         return 0;
     }
     while(!x.empty()){
         int q = x.top();
-
         x.pop();
         fin +=q;
     }
