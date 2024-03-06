@@ -1,98 +1,74 @@
 #include <iostream>
 #include <queue>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
-
 #define X first
 #define Y second
 
-queue<pair<int, int>> fire;
-queue<pair<int, int>> ji;
-
-int dis[1002][1002]; // #, J, F=0 // .은 -1
-int jdis[1002][1002];
+int board[1002][1002];   // 0 1 -1 입력 받을 것
+int dis[1002][1002];     // 거리 측정용
+queue<pair<int, int>> Q; // 현재, 다음 칸 담을 큐
 
 int dx[4] = {1, 0, -1, 0};
 int dy[4] = {0, 1, 0, -1};
 
-int r, c;
+int n, m;
 
 int main()
 {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cin >> m >> n;
 
-    cin >> r >> c;
-
-    for (int i = 0; i < r; i++)
+    for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < c; j++)
+        for (int j = 0; j < m; j++)
         {
-            char maze;
-            cin >> maze;
-            if (maze == '.')
-            {
+            cin >> board[i][j];
+            if (board[i][j] == 0)
                 dis[i][j] = -1;
-                jdis[i][j] = -1;
-            }
-            else if (maze == 'F')
-            {
-                fire.push({i, j});
-            }
-            else if (maze == 'J')
-                ji.push({i, j});
+            if (board[i][j] == 1)
+                Q.push({i, j});
         }
     }
 
-    while (!fire.empty())
+    // 1인 익은 토마토를 찾은 경우 거기서 부터 bfs
+    while (!Q.empty())
     {
-        pair<int, int> cur = fire.front();
-        fire.pop();
-        for (int dir = 0; dir < 4; dir++)
+        pair<int, int> cur = Q.front();
+        Q.pop();
+        for (int i = 0; i < 4; i++)
         {
-            int nx = cur.X + dx[dir];
-            int ny = cur.Y + dy[dir];
+            int nx = cur.X + dx[i];
+            int ny = cur.Y + dy[i];
 
-            if (nx >= r || nx < 0 || ny >= c || ny < 0)
+            if (nx < 0 || nx >= n || ny < 0 || ny >= m)
                 continue;
             if (dis[nx][ny] >= 0)
-                continue;
-
+                continue; // 다음 목적지가 이미 방문한 곳이거나, 토마토가 안든 칸인 경우
             dis[nx][ny] = dis[cur.X][cur.Y] + 1;
-            fire.push({nx, ny});
+            Q.push({nx, ny});
         }
     }
 
-    // dis[nx][ny]는 불이 지나간 시점을 담은 것 . 즉 이미 담긴 값보다 현재 값이 작아야 지훈이는 탈출 가능한 것
-    while (!ji.empty())
+    int res = 0;
+    for (int i = 0; i < n; i++)
     {
-        pair<int, int> cur = ji.front();
-        ji.pop();
-
-        for (int dir = 0; dir < 4; dir++)
+        for (int j = 0; j < m; j++)
         {
-            int nx = cur.X + dx[dir];
-            int ny = cur.Y + dy[dir];
-
-            if (nx >= r || nx < 0 || ny >= c || ny < 0)
+            if (dis[i][j] == -1)
             {
-                // 다음칸이 가장자리인데 이때 현재의 dis 값이 지훈이가 더 작은 경우 -> 지훈이가 불보다 먼저도착-> 탈출
-                if (jdis[cur.X][cur.Y] < dis[cur.X][cur.Y])
-                {
-                    cout << jdis[cur.X][cur.Y] + 1;
-                    return 0;
-                }
-                continue;
+                cout << -1;
+                return 0;
             }
-            if (jdis[nx][ny] == 0)
-                continue; // #, J, F 인 경우에는 다른 칸으로
-
-            jdis[nx][ny] = jdis[cur.X][cur.Y] + 1;
-            ji.push({nx, ny});
+            else
+            {
+                if (res < dis[i][j])
+                    res = dis[i][j];
+            }
         }
     }
-
-    cout << "IMPOSSIBLE";
-    return 0;
+    cout << res;
 }
